@@ -3,36 +3,44 @@ from urllib.request import urlopen, Request
 from bs4 import BeautifulSoup
 
 
-# class getting all items from xml feed file
+# class declaring item attributes
 class Items:
+    def __init__(self, title, description, link, pubDate, image, category):
+        self.title = title
+        self.description = description
+        self.link = link
+        self.pubDate = pubDate
+        self.image = image
+        self.category = category
 
-    def __init__(self, rssLink):
-        # declaring item attributes
-        self.title = []
-        self.description = []
-        self.link = []
-        self.pubDate = []
-        self.image = []
-        self.category = []
 
-        self.rssLink = rssLink
-        self.soup = None
-
-    def makeSoup(self):
-        # opening url address with feed
-        req = Request(self.rssLink)
+# creating list with xml files with feeds
+def makeSoups(links):
+    soupList = []
+    for link in links:
+        req = Request(link)
         page = urlopen(req)
 
-        self.soup = BeautifulSoup(page, 'xml')
+        soup = BeautifulSoup(page, 'xml')
+        soupList.append(soup)
 
-    def addElements(self):
-        # adding elements to lists
-        allItems = list(self.soup.find_all("item"))
+    return soupList
+
+
+# making class objects with attributes
+def makeItem(soups):
+    itemsList = []
+    for soup in soups:
+        allItems = list(soup.find_all("item"))
 
         for item in allItems:
-            self.title.append(item.find("title"))
-            self.description.append(item.find("description"))
-            self.link.append(item.find("link"))
-            self.pubDate.append(item.find("pubDate"))
-            self.image.append(item.find("enclosure"))
-            self.category.append(item.find("category"))
+            title = item.find("title")
+            description = item.find("description")
+            link = item.find("link")
+            pubDate = item.find("pubDate")
+            image = item.find("enclosure")
+            category = item.find("category")
+
+            itemsList.append(Items(title, description, link, pubDate, image, category))
+
+    return itemsList
