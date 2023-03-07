@@ -5,13 +5,17 @@ from bs4 import BeautifulSoup
 
 # class declaring item attributes
 class Items:
-    def __init__(self, title, description, link, pubDate, image, category):
+    def __init__(self, title, description, link, pubDate, image, category, guid):
         self.title = title
         self.description = description
         self.link = link
         self.pubDate = pubDate
         self.image = image
         self.category = category
+        if guid is not None:
+            self.guid = guid
+        else:
+            self.guid = link
 
 
 # creating list with xml files with feeds
@@ -34,13 +38,26 @@ def makeItem(soups):
         allItems = list(soup.find_all("item"))
 
         for item in allItems:
-            title = item.find("title")
-            description = item.find("description")
-            link = item.find("link")
-            pubDate = item.find("pubDate")
-            image = item.find("enclosure")
-            category = item.find("category")
+            title = item.find("title").text
+            description = item.find("description").text
+            link = item.find("link").text
+            pubDate = item.find("pubDate").text
+            try:
+                image = item.find("enclosure").attrs["url"]
+            except AttributeError:
+                try:
+                    image = item.find("enclosure").attrs["src"]
+                except AttributeError:
+                    image = None
+            try:
+                category = item.find("category").text
+            except AttributeError:
+                category = None
+            try:
+                guid = item.find("guid").text
+            except AttributeError:
+                guid = None
 
-            itemsList.append(Items(title, description, link, pubDate, image, category))
+            itemsList.append(Items(title, description, link, pubDate, image, category, guid))
 
     return itemsList
