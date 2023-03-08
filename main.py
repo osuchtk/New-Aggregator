@@ -1,10 +1,6 @@
 from ItemRSS import makeSoups, makeItem
 from mariadbcontroller import connectToDatabase, addToDatabase
 
-# links = ["https://wydarzenia.interia.pl/feed",
-#          "https://tvn24.pl/najnowsze.xml",
-#          "https://www.polsatnews.pl/rss/wszystkie.xml"]
-
 categories = ["Wszystkie",
               "Polska",
               "Świat",
@@ -54,9 +50,16 @@ categoryEntertainment = ["https://gry.interia.pl/feed",
 
 links = categoryALL + categoryPoland + categoryWorld + categoryCulture + categorySport + categoryBusiness + \
         categoryEntertainment
+categoriesDict = {'All': categoryALL,
+                  'Poland': categoryPoland,
+                  'World': categoryWorld,
+                  'Culture': categoryCulture,
+                  'Sport': categorySport,
+                  'Business': categoryBusiness,
+                  'Entertainment': categoryEntertainment}
 
 soups = makeSoups(links)
-items = makeItem(soups)
+items = makeItem(soups, categoriesDict)
 
 conn, cur = connectToDatabase()
 for item in items:
