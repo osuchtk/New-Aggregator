@@ -34,36 +34,39 @@ def makeSoups(links):
 # making class objects with attributes
 def makeItem(soups, categories):
     itemsList = []
-    for soup in soups:
-        allItems = list(soup.find_all("item"))
-        try:
-            categoryFromFeed = soup.find("atom:link").attrs['href']
-        except AttributeError:
-            categoryFromFeed = soup.find("link").text
-        for item in allItems:
-            title = item.find("title").text
-            description = item.find("description").text
-
-            link = item.find("link").text
-            pubDate = item.find("pubDate").text
+    for categoryDict in categories:
+        for soup in soups:
+            allItems = list(soup.find_all("item"))
             try:
-                image = item.find("enclosure").attrs['url']
+                categoryFromFeed = soup.find("atom:link").attrs['href']
             except AttributeError:
+                categoryFromFeed = soup.find("link").text
+            for item in allItems:
+                title = item.find("title").text
+                description = item.find("description").text
+
+                link = item.find("link").text
+                pubDate = item.find("pubDate").text
                 try:
-                    image = item.find("enclosure").attrs['src']
+                    image = item.find("enclosure").attrs['url']
                 except AttributeError:
-                    image = None
+                    try:
+                        image = item.find("enclosure").attrs['src']
+                    except AttributeError:
+                        image = None
 
-            try:
-                guid = item.find("guid").text
-            except AttributeError:
-                guid = None
+                try:
+                    guid = item.find("guid").text
+                except AttributeError:
+                    guid = None
 
-            try:
-                category = [key for key, value in categories.items() if categoryFromFeed in value][0]
-            except IndexError:
-                category = None
+                try:
+                    #category = [key for key, value in categories.items() if categoryFromFeed in value][0]
+                    category = categoryDict
+                    #print(1)
+                except IndexError:
+                    category = None
 
-            itemsList.append(Items(title, description, link, pubDate, image, category, guid))
+                itemsList.append(Items(title, description, link, pubDate, image, category, guid))
 
     return itemsList
