@@ -28,7 +28,7 @@ def addToDatabase(object, cur, conn):
         cur.execute("INSERT INTO newsAggregator.news (title, description, link, pubDate, image, category, guid) "
                     "VALUES (?, ?, ?, ?, ?, ?, ?)", (object.title, object.description, object.link, object.pubDate,
                                                      object.image, object.category, object.guid))
-    except mariadb.Error:
-        print("Error")
+    except mariadb.Error as e:
+        print(e)
 
     conn.commit()

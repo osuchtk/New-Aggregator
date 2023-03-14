@@ -58,8 +58,8 @@ categoriesDict = {'All': categoryALL,
                   'Business': categoryBusiness,
                   'Entertainment': categoryEntertainment}
 
-soups = makeSoups(links)
-items = makeItem(soups, categoriesDict)
+categories, soups = makeSoups(categoriesDict)
+items = makeItem(soups, categories)
 
 conn, cur = connectToDatabase()
 for item in items:

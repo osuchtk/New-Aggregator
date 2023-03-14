@@ -21,52 +21,45 @@ class Items:
 # creating list with xml files with feeds
 def makeSoups(links):
     soupList = []
-    for link in links:
-        req = Request(link)
-        page = urlopen(req)
+    categoryList = []
 
-        soup = BeautifulSoup(page, 'xml')
-        soupList.append(soup)
+    # iterate through keys of dictionary to get to values (links) ang get xml
+    for category in links.keys():
+        for link in links[category]:
+            req = Request(link)
+            page = urlopen(req)
+            soup = BeautifulSoup(page, 'xml')
+            categoryList.append(category)
+            soupList.append(soup)
 
-    return soupList
+    return categoryList, soupList
 
 
 # making class objects with attributes
 def makeItem(soups, categories):
     itemsList = []
-    for categoryDict in categories:
-        for soup in soups:
-            allItems = list(soup.find_all("item"))
+    for soup, categoryIterator in zip(soups, categories):
+        allItems = list(soup.find_all("item"))
+
+        for item in allItems:
+            title = item.find("title").text
+            description = item.find("description").text
+            link = item.find("link").text
+            pubDate = item.find("pubDate").text
             try:
-                categoryFromFeed = soup.find("atom:link").attrs['href']
+                image = item.find("enclosure").attrs['url']
             except AttributeError:
-                categoryFromFeed = soup.find("link").text
-            for item in allItems:
-                title = item.find("title").text
-                description = item.find("description").text
-
-                link = item.find("link").text
-                pubDate = item.find("pubDate").text
                 try:
-                    image = item.find("enclosure").attrs['url']
+                    image = item.find("enclosure").attrs['src']
                 except AttributeError:
-                    try:
-                        image = item.find("enclosure").attrs['src']
-                    except AttributeError:
-                        image = None
+                    image = None
+            try:
+                guid = item.find("guid").text
+            except AttributeError:
+                guid = None
 
-                try:
-                    guid = item.find("guid").text
-                except AttributeError:
-                    guid = None
+            category = categoryIterator
 
-                try:
-                    #category = [key for key, value in categories.items() if categoryFromFeed in value][0]
-                    category = categoryDict
-                    #print(1)
-                except IndexError:
-                    category = None
-
-                itemsList.append(Items(title, description, link, pubDate, image, category, guid))
+            itemsList.append(Items(title, description, link, pubDate, image, category, guid))
 
     return itemsList
