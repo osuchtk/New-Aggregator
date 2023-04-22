@@ -20,6 +20,12 @@ class Weather:
         self.actualPrecProb = precProb
 
 
+class ForecastWeather(Weather):
+    def __init__(self, city, time, temp, hum, press, status, windSpeed, windDir, snow, precProb, measureId):
+        super().__init__(city, time, temp, hum, press, status, windSpeed, windDir, snow, precProb)
+        self.measureID = measureId
+
+
 def getWeather():
     # read file with cities in poland
     citiesFile = pd.read_excel("./worldcities.xlsx")
@@ -52,6 +58,7 @@ def getWeather():
             actualStatus = observation.weather.status
             actualWindSpeed = observation.weather.wnd['speed']
             actualWindDir = observation.weather.wnd['deg']
+
             try:
                 actualSnow = observation.weather.snow['1h']
             except KeyError:
@@ -72,26 +79,35 @@ def getWeather():
     err = []
     forecastWeatherList = []
 
-    # for city in cities:
-    #     try:
-    #         observation = mgr.forecast_at_place('London,GB', '3h').forecast
-    #
-    #         for ind in range(len(observation.weathers)):
-    #             forecastTime = observation.weathers[ind].ref_time
-    #             forecastTemp = observation.weathers[ind].temp['temp']
-    #             forecastHum = observation.weathers[ind].humidity
-    #             forecastPress = observation.weathers[ind].pressure['press']
-    #             forecastStatus = observation.weathers[ind].status
-    #             forecastWindSpeed = observation.weathers[ind].wnd['speed']
-    #             forecastWindDir = observation.weathers[ind].wnd['deg']
-    #             forecastSnow = observation.weathers[ind].snow.values()
-    #             forecastPrecProb = observation.weathers[ind].precipitation_probability
-    #
-    #             forecastWeatherList.append(Weather(city, forecastTime, forecastTemp, forecastHum, forecastPress, forecastStatus,
-    #                                        forecastWindSpeed, forecastWindDir, forecastSnow, forecastPrecProb))
-    #
-    #     except:
-    #         err.append(city)
-    #
+    for city in cities:
+        try:
+            observation = mgr.forecast_at_place('{},PL'.format(city), '3h').forecast
+
+            for ind in range(len(observation.weathers)):
+                forecastTime = datetime.fromtimestamp(observation.weathers[ind].ref_time)
+                forecastTemp = observation.weathers[ind].temp['temp']
+                forecastHum = observation.weathers[ind].humidity
+                forecastPress = observation.weathers[ind].pressure['press']
+                forecastStatus = observation.weathers[ind].status
+                forecastWindSpeed = observation.weathers[ind].wnd['speed']
+                forecastWindDir = observation.weathers[ind].wnd['deg']
+
+                try:
+                    forecastSnow = observation.weathers[ind].snow['1h']
+                except KeyError:
+                    forecastSnow = 0
+
+                forecastPrecProb = observation.weathers[ind].precipitation_probability
+                if forecastPrecProb is None:
+                    forecastPrecProb = 0
+
+                measureid = city + " " + str(forecastTime)
+
+                forecastWeatherList.append(ForecastWeather(city, forecastTime, forecastTemp, forecastHum, forecastPress,
+                                                           forecastStatus, forecastWindSpeed, forecastWindDir,
+                                                           forecastSnow, forecastPrecProb, measureid))
+
+        except:
+            err.append(city)
 
     return actualWeatherList, forecastWeatherList
