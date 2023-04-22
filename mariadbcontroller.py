@@ -37,11 +37,12 @@ def addNews(object, cur, conn):
 def addActualWeather(object, cur, conn):
     try:
         cur.execute("INSERT INTO newsAggregator.actualweather (city, time, temperature, humidity, pressure, status, "
-                    "windSpeed, windDirection, snow, precitipationProbability) "
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (object.city, object.actualTime, object.actualTemp,
-                                                              object.actualHum, object.actualPress, object.actualStatus,
-                                                              object.actualWindSpeed, object.actualWindDir,
-                                                              object.actualSnow, object.actualPrecProb))
+                    "windSpeed, windDirection, snow, precitipationProbability, icon) "
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (object.city, object.actualTime, object.actualTemp,
+                                                                 object.actualHum, object.actualPress,
+                                                                 object.actualStatus,
+                                                                 object.actualWindSpeed, object.actualWindDir,
+                                                                 object.actualSnow, object.actualPrecProb, object.icon))
     except mariadb.Error as e:
         print(e)
 
@@ -51,13 +52,13 @@ def addActualWeather(object, cur, conn):
 def addForecastWeather(object, cur, conn):
     try:
         cur.execute(
-            "INSERT INTO newsAggregator.forecastweather (measureid, city, time, temperature, humidity, pressure, status, "
-            "windSpeed, windDirection, snow, precitipationProbability) "
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (object.measureID, object.city, object.actualTime,
-                                                         object.actualTemp, object.actualHum,
-                                                         object.actualPress, object.actualStatus,
-                                                         object.actualWindSpeed, object.actualWindDir,
-                                                         object.actualSnow, object.actualPrecProb))
+            "INSERT INTO newsAggregator.forecastweather (measureid, city, time, temperature, humidity, pressure, status,"
+            "windSpeed, windDirection, snow, precitipationProbability, icon) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (object.measureID, object.city, object.actualTime,
+                                                            object.actualTemp, object.actualHum,
+                                                            object.actualPress, object.actualStatus,
+                                                            object.actualWindSpeed, object.actualWindDir,
+                                                            object.actualSnow, object.actualPrecProb, object.icon))
     except mariadb.Error as e:
         print(e)
 

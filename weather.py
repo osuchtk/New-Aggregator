@@ -7,7 +7,7 @@ from credentials import weatherAPI
 
 
 class Weather:
-    def __init__(self, city, time, temp, hum, press, status, windSpeed, windDir, snow, precProb):
+    def __init__(self, city, time, temp, hum, press, status, windSpeed, windDir, snow, precProb, icon):
         self.city = city
         self.actualTime = time
         self.actualTemp = temp
@@ -18,11 +18,12 @@ class Weather:
         self.actualWindDir = windDir
         self.actualSnow = snow
         self.actualPrecProb = precProb
+        self.icon = "https://openweathermap.org/img/wn/{}@2x.png".format(icon)
 
 
 class ForecastWeather(Weather):
-    def __init__(self, city, time, temp, hum, press, status, windSpeed, windDir, snow, precProb, measureId):
-        super().__init__(city, time, temp, hum, press, status, windSpeed, windDir, snow, precProb)
+    def __init__(self, city, time, temp, hum, press, status, windSpeed, windDir, snow, precProb, measureId, icon):
+        super().__init__(city, time, temp, hum, press, status, windSpeed, windDir, snow, precProb, icon)
         self.measureID = measureId
 
 
@@ -68,8 +69,10 @@ def getWeather():
             if actualPrecProb is None:
                 actualPrecProb = 0
 
+            icon = observation.weather.weather_icon_name
+
             actualWeatherList.append(Weather(city, actualTime, actualTemp, actualHum, actualPress, actualStatus,
-                                             actualWindSpeed, actualWindDir, actualSnow, actualPrecProb))
+                                             actualWindSpeed, actualWindDir, actualSnow, actualPrecProb, icon))
 
         # test without try...except to refine except clause
         except:
@@ -102,10 +105,11 @@ def getWeather():
                     forecastPrecProb = 0
 
                 measureid = city + " " + str(forecastTime)
+                icon = observation.weathers[ind].weather_icon_name
 
                 forecastWeatherList.append(ForecastWeather(city, forecastTime, forecastTemp, forecastHum, forecastPress,
                                                            forecastStatus, forecastWindSpeed, forecastWindDir,
-                                                           forecastSnow, forecastPrecProb, measureid))
+                                                           forecastSnow, forecastPrecProb, measureid, icon))
 
         except:
             err.append(city)
