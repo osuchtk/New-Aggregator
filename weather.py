@@ -114,4 +114,5 @@ def getWeather():
         except:
             err.append(city)
 
+    print("Weather - SUCCESS")
     return actualWeatherList, forecastWeatherList

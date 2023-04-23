@@ -1,5 +1,6 @@
 from ItemRSS import makeSoups, makeItem
-from mariadbcontroller import connectToDatabase, addNews, addActualWeather, addForecastWeather
+from currency import getCurrencies
+from mariadbcontroller import connectToDatabase, addNews, addActualWeather, addForecastWeather, addCurrencies
 from weather import getWeather
 
 categories = ["Wszystkie",
@@ -59,11 +60,15 @@ categoriesDict = {'All': categoryALL,
                   'Business': categoryBusiness,
                   'Entertainment': categoryEntertainment}
 
+# getting news, weather and currencies
 categories, soups = makeSoups(categoriesDict)
 items = makeItem(soups, categories)
 
 weatherActual, weatherForecast = getWeather()
 
+currencies = getCurrencies()
+
+# connecting do database and saving data
 conn, cur = connectToDatabase()
 for item in items:
     addNews(item, cur, conn)
@@ -73,6 +78,9 @@ for item in weatherActual:
 
 for item in weatherForecast:
     addForecastWeather(item, cur, conn)
+
+for item in currencies:
+    addCurrencies(item, cur, conn)
 
 conn.close()
 print(1)

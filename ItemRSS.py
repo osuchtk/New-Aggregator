@@ -62,4 +62,5 @@ def makeItem(soups, categories):
 
             itemsList.append(Items(title, description, link, pubDate, image, category, guid))
 
+    print("News - SUCCESS")
     return itemsList

@@ -25,7 +25,7 @@ def connectToDatabase():
 # adding class object to database
 def addNews(object, cur, conn):
     try:
-        cur.execute("INSERT INTO newsAggregator.news (title, description, link, pubDate, image, category, guid) "
+        cur.execute("REPLACE INTO newsAggregator.news (title, description, link, pubDate, image, category, guid) "
                     "VALUES (?, ?, ?, ?, ?, ?, ?)", (object.title, object.description, object.link, object.pubDate,
                                                      object.image, object.category, object.guid))
     except mariadb.Error as e:
@@ -36,7 +36,7 @@ def addNews(object, cur, conn):
 
 def addActualWeather(object, cur, conn):
     try:
-        cur.execute("INSERT INTO newsAggregator.actualweather (city, time, temperature, humidity, pressure, status, "
+        cur.execute("REPLACE INTO newsAggregator.actualweather (city, time, temperature, humidity, pressure, status, "
                     "windSpeed, windDirection, snow, precitipationProbability, icon) "
                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (object.city, object.actualTime, object.actualTemp,
                                                                  object.actualHum, object.actualPress,
@@ -52,13 +52,24 @@ def addActualWeather(object, cur, conn):
 def addForecastWeather(object, cur, conn):
     try:
         cur.execute(
-            "INSERT INTO newsAggregator.forecastweather (measureid, city, time, temperature, humidity, pressure, status,"
+            "REPLACE INTO newsAggregator.forecastweather (measureid, city, time, temperature, humidity, pressure, status,"
             "windSpeed, windDirection, snow, precitipationProbability, icon) "
             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (object.measureID, object.city, object.actualTime,
                                                             object.actualTemp, object.actualHum,
                                                             object.actualPress, object.actualStatus,
                                                             object.actualWindSpeed, object.actualWindDir,
                                                             object.actualSnow, object.actualPrecProb, object.icon))
+    except mariadb.Error as e:
+        print(e)
+
+    conn.commit()
+
+
+def addCurrencies(object, cur, conn):
+    try:
+        cur.execute(
+            "REPLACE INTO newsAggregator.currencies (code, name, bid, ask) "
+            "VALUES (?, ?, ?, ?)", (object.code, object.currencyName, object.bid, object.ask))
     except mariadb.Error as e:
         print(e)
 
