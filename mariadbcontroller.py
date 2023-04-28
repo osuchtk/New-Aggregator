@@ -68,8 +68,9 @@ def addForecastWeather(object, cur, conn):
 def addCurrencies(object, cur, conn):
     try:
         cur.execute(
-            "REPLACE INTO newsAggregator.currencies (code, name, bid, ask) "
-            "VALUES (?, ?, ?, ?)", (object.code, object.currencyName, object.bid, object.ask))
+            "REPLACE INTO newsAggregator.currencies (code, name, bid, ask, recordID, date) "
+            "VALUES (?, ?, ?, ?, ?, ?)", (object.code, object.currencyName, object.bid, object.ask, object.recordID,
+                                          object.date))
     except mariadb.Error as e:
         print(e)
 
