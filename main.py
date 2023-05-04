@@ -3,6 +3,7 @@ from currency import getCurrencies
 from mariadbcontroller import connectToDatabase, addNews, addActualWeather, addForecastWeather, addCurrencies
 from weather import getWeather
 
+# declaring categories
 categories = ["Wszystkie",
               "Polska",
               "Świat",
@@ -11,6 +12,7 @@ categories = ["Wszystkie",
               "Biznes",
               "Rozrywka"]
 
+# declaring websites to get news from
 categoryALL = ["https://wydarzenia.interia.pl/feed",
                "https://www.polsatnews.pl/rss/wszystkie.xml",
                "https://tvn24.pl/najnowsze.xml",
@@ -50,8 +52,11 @@ categoryEntertainment = ["https://gry.interia.pl/feed",
                          "https://muzyka.interia.pl/feed",
                          "https://www.tokfm.pl/pub/rss/tokfmpl_rozrywka.xml"]
 
+# concatenating links to one list
 links = categoryALL + categoryPoland + categoryWorld + categoryCulture + categorySport + categoryBusiness + \
         categoryEntertainment
+
+# creating dictionary from categories and websites
 categoriesDict = {'All': categoryALL,
                   'Poland': categoryPoland,
                   'World': categoryWorld,
@@ -68,7 +73,7 @@ weatherActual, weatherForecast = getWeather()
 
 currencies = getCurrencies()
 
-# connecting do database and saving data
+# connecting to database to save data
 conn, cur = connectToDatabase()
 for item in items:
     addNews(item, cur, conn)
@@ -82,5 +87,5 @@ for item in weatherForecast:
 for item in currencies:
     addCurrencies(item, cur, conn)
 
+# closing connection
 conn.close()
-print(1)

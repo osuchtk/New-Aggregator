@@ -6,6 +6,7 @@ from pyowm import OWM
 from credentials import weatherAPI
 
 
+# classes for actual and future weather object
 class Weather:
     def __init__(self, city, time, temp, hum, press, status, windSpeed, windDir, snow, precProb, icon):
         self.city = city
@@ -28,7 +29,7 @@ class ForecastWeather(Weather):
 
 
 def getWeather():
-    # read file with cities in poland
+    # read file with polish cities
     citiesFile = pd.read_excel("./worldcities.xlsx")
     citiesFile = citiesFile.query("country == 'Poland'")
     polishCities = citiesFile['city']
@@ -40,9 +41,6 @@ def getWeather():
     # conect to Open Weather Map
     owm = OWM(weatherAPI)
     mgr = owm.weather_manager()
-
-    # limiting cities list -> free version of owm
-    cities = cities[:20]
 
     # getting actual weather
     err = []

@@ -3,7 +3,7 @@ from urllib.request import urlopen, Request
 from bs4 import BeautifulSoup
 
 
-# class declaring item attributes
+# # class for news object
 class Items:
     def __init__(self, title, description, link, pubDate, image, category, guid):
         self.title = title
@@ -43,7 +43,22 @@ def makeItem(soups, categories):
 
         for item in allItems:
             title = item.find("title").text
+
+            # cleaning descriptions from html markers
             description = item.find("description").text
+            if description[0:6] == "<p><a ":
+                description = description.split("</a>")[1].split("</p>")[0]
+            if description[0:1] == "\n":
+                description = description.split("/>")[1].replace("\n", "").replace("  ", "")
+            if description[0:6] == "<p><im":
+                description = description.split("/>")[1].split("<")[0]
+            if description[0:6] == "<img s":
+                description = description.split(">")[1]
+            if "&quot;" in description:
+                description = description.replace("&quot;", '"')
+            if description[0:3] == "<p>":
+                description = description.split("<p>")[1].split("</p>")[0]
+
             link = item.find("link").text
             pubDate = item.find("pubDate").text
             try:
